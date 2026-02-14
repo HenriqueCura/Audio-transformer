@@ -1,0 +1,10 @@
+googletrans==3.1.0-alpha
+os
+openai
+pydantic
+json
+pyttsx3
+PyPDF2
+pathlib
+sys
+langdetect 

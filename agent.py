@@ -1,40 +1,36 @@
 import os
 from openai import OpenAI
 from pydantic import BaseModel
+from googletrans import Translator
+from googletrans import LANGUAGES
+import json
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-class resumo(BaseModel):
-    titulo: str
-    resumo: str
+system_prompt = """
+You are a professional summarization assistant.
 
-prompt = client.chat.completions.create(
-    model = "chatgpt-4o-latest",
+Rules:
+- The summary must be written in English.
+- Minimum 30 words.
+- Maximum 200 words.
+- Do not add explanations.
+- Only return the summary.
+"""
+
+
+def run_agent(user_text):
+
     messages = [
-        {"role": "system", "content":"You are a pdf summary agent. You will be given a pdf and your job is to summarise the text in that pdf."},
-        {
-            "role": "user", 
-            "content": "x"
-        }
-    ],
-)
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_text}
+    ]
 
-response = prompt.choices[0].message.content
-print(response)
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+    )
 
-prompt = client.beta.chat.completions.parse(
-    model = "chatgpt-4o-latest",
-    messages = [
-        {"role": "system", "content":"You are a pdf summary agent. You will be given a pdf and your job is to summarise the text in that pdf."
-        " Also get the pdf's title."},
-        {
-            "role": "user", 
-            "content": "x"
-        }
-    ],
-    response_format=resumo,
-)
+    message = response.choices[0].message
 
-response = prompt.choices[0].message.parsed
-titulo = response.titulo
-resumoo = response.resumo
+    return message.content
