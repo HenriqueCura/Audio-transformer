@@ -1,6 +1,7 @@
 import pyttsx3, PyPDF2 
 from pathlib import Path
 import sys
+from agent import run_agent
 
 if len(sys.argv) != 2:
     print(f"Usage: {sys.argv[0]} <path> ")
@@ -25,7 +26,7 @@ def obtem_texto(pdf):
         text = pdf.pages[pag_n].extract_text()
         clean_text = text.strip().replace('/n',' ')
         texto_inteiro.append(clean_text)
-        print(clean_text)
+    texto_inteiro = " ".join(texto_inteiro)
     return texto_inteiro
 
 def main():
@@ -33,8 +34,9 @@ def main():
     pdf = carrega_pdf(path)
     speaker = speaker_init()
     clean_text = obtem_texto(pdf)
-    pathII = f'{path[-3:]}_mp3.mp3' # nome padrão para cada ficheiro sendo retirado o .pdf
-    speaker.save_to_file(clean_text,pathII)
+    resumo = run_agent(clean_text)
+    pathII = f'{path[:-4]}.mp3' # nome padrão para cada ficheiro sendo retirado o .pdf
+    speaker.save_to_file(resumo,pathII)
     speaker.runAndWait()
     speaker.stop()
 

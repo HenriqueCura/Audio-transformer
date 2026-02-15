@@ -1,10 +1,7 @@
-googletrans==3.1.0-alpha
-os
-openai
+deep-translator
+openai>=1.30.0,<2
 pydantic
-json
 pyttsx3
 PyPDF2
-pathlib
-sys
 langdetect 
+python-dotenv
